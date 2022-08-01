@@ -8,7 +8,8 @@ import {
 import { GetApplicationStatus } from '../../src/services/ScraperService.js';
 import { SendMail } from '../../src/services/MailService.js';
 
-export const handler = schedule(cronSchedule, async () => {
+let cron = cronSchedule;
+export const handler = schedule(cron, async () => {
   GetApplicationStatus(function (response) {
     let status = response;
     let body = '';
