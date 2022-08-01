@@ -4,9 +4,19 @@ import {
   closedMessage,
   subject,
   cronSchedule,
+  authorizedUser,
+  from,
+  to,
+  clientId,
+  clientSecret,
+  redirectUrl,
+  refreshToken,
+  webUrl,
 } from '../../config.js';
 import { GetApplicationStatus } from '../../src/services/ScraperService.js';
 import { SendMail } from '../../src/services/MailService.js';
+import request from 'request';
+import cheerio from 'cheerio';
 
 export const handler = schedule('* * * * *', async () => {
   // GetApplicationStatus(function (response) {
@@ -30,6 +40,7 @@ export const handler = schedule('* * * * *', async () => {
   let status = 'value';
   let body = '';
   let uSubject = '';
+  const diplomaUrl = webUrl;
 
   request(diplomaUrl, function (error, response, html) {
     if (!error && response.statusCode == 200) {
