@@ -8,12 +8,6 @@ import {
 import { GetApplicationStatus } from './ScraperService.js';
 import { SendMail } from './MailService.js';
 
-export function InitScheduler() {
-  var job = schedule.scheduleJob(cronSchedule, function () {
-    console.log('Printing every minute');
-  });
-}
-
 // var j = schedule.scheduleJob('0 7 * * *', function () {
 //   GetApplicationStatus(function (response) {
 //     let status = response;
