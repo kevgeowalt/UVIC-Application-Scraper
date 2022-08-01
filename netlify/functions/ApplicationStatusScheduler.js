@@ -21,25 +21,6 @@ import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 
 export const handler = schedule('* * * * *', async () => {
-  // GetApplicationStatus(function (response) {
-  //   let status = response;
-  //   let body = '';
-  //   let uSubject = '';
-  //   if (status == 'OPEN') {
-  //     body = openMessage;
-  //     uSubject = `${subject}OPEN`;
-  //   }
-
-  //   if (status == 'CLOSED') {
-  //     body = closedMessage;
-  //     uSubject = `${subject}CLOSED`;
-  //   }
-
-  //   SendMail(body, uSubject)
-  //     .then((mailResult) => console.log('Email sent', mailResult))
-  //     .catch((err) => console.error(err.messae));
-  // });
-
   request(webUrl, function (error, response, html) {
     let status = 'value';
     let body = '';
@@ -78,7 +59,7 @@ export const handler = schedule('* * * * *', async () => {
 
       oauth2Client.setCredentials({ refresh_token: refreshToken });
 
-      oauth2Client.getAccessToken(function (accessToken) {
+      oauth2Client.getAccessToken(function (err, token) {
         const transport = nodemailer.createTransport({
           service: 'gmail',
           auth: {
@@ -87,7 +68,7 @@ export const handler = schedule('* * * * *', async () => {
             clientId: clientId,
             clientSecret: clientSecret,
             refreshToken: refreshToken,
-            accessToken: accessToken,
+            accessToken: token,
           },
         });
 
