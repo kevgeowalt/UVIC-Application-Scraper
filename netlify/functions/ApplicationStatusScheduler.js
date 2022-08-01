@@ -8,31 +8,30 @@ import {
 import { GetApplicationStatus } from '../../src/services/ScraperService.js';
 import { SendMail } from '../../src/services/MailService.js';
 
-let cron = cronSchedule;
-export const handler = schedule('* * * * *', async () => {
-  let outsideStatus = 'Outside status - ';
-  GetApplicationStatus(function (response) {
-    let status = response;
-    let body = '';
-    let uSubject = '';
-    console.log(status);
-    console.log(outsideStatus, response);
-    // if (status == 'OPEN') {
-    //   body = openMessage;
-    //   uSubject = `${subject}OPEN`;
-    // }
+function testFunc() {
+  console.log('Testing testing testing');
+}
 
-    // if (status == 'CLOSED') {
-    //   body = closedMessage;
-    //   uSubject = `${subject}CLOSED`;
-    // }
+export const handler = schedule('* * * * *', async (testFunc) => {
+  // GetApplicationStatus(function (response) {
+  //   let status = response;
+  //   let body = '';
+  //   let uSubject = '';
+  //   if (status == 'OPEN') {
+  //     body = openMessage;
+  //     uSubject = `${subject}OPEN`;
+  //   }
 
-    // SendMail(body, uSubject)
-    //   .then((mailResult) => console.log('Email sent', mailResult))
-    //   .catch((err) => console.error(err.messae));
-  });
+  //   if (status == 'CLOSED') {
+  //     body = closedMessage;
+  //     uSubject = `${subject}CLOSED`;
+  //   }
 
-  console.log('OUTSIDE OUTSIDE');
+  //   SendMail(body, uSubject)
+  //     .then((mailResult) => console.log('Email sent', mailResult))
+  //     .catch((err) => console.error(err.messae));
+  // });
+  testFunc();
   return {
     statusCode: 200,
     body: 'Successfully processed request',
