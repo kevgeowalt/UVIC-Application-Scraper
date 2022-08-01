@@ -1,22 +1,81 @@
-// // import { InitScheduler } from './services/ScheduleService.js';
-// // import express from 'express';
-// // import serverless from 'serverless-http';
+import {
+  openMessage,
+  closedMessage,
+  subject,
+  cronSchedule,
+  authorizedUser,
+  from,
+  to,
+  clientId,
+  clientSecret,
+  redirectUrl,
+  refreshToken,
+  webUrl,
+} from '.././config.js';
+import request from 'request';
+import cheerio from 'cheerio';
+import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 
-// const express = require('express');
-// const serverless = require('serverless-http');
+request(webUrl, function (error, response, html) {
+  let status = 'value';
+  let body = '';
+  let uSubject = '';
+  if (!error && response.statusCode == 200) {
+    const $ = cheerio.load(html);
+    const CLOSED = 'Not Currently Accepting';
 
-// const app = express();
+    $('.row.dcs-dateflow.margin-bottom-20').each(function (index, element) {
+      const item = $(element).text().replace(/\s\s+/g, ',').trim();
+      let arr = item.split(',');
 
-// const router = express.Router();
-// router.get('/', (req, res) => {
-//   res.json({
-//     hello: 'hi',
-//   });
-// });
+      let availIndex = arr.indexOf('Availability');
+      if (arr[availIndex + 1] == CLOSED) {
+        status = 'CLOSED';
+      } else {
+        status = 'OPEN';
+      }
+    });
 
-// app.use('/.netlify/functions/main', router);
-// module.exports.handler = serverless(app);
-// // app.set('port', 3001);
-// // app.listen(app.get('port'), () => {
-// //   InitScheduler();
-// // });
+    if (status == 'OPEN') {
+      body = openMessage;
+      uSubject = `${subject}OPEN`;
+    }
+
+    if (status == 'CLOSED') {
+      body = closedMessage;
+      uSubject = `${subject}CLOSED`;
+    }
+
+    const oauth2Client = new google.auth.OAuth2(
+      clientId,
+      clientSecret,
+      redirectUrl
+    );
+
+    oauth2Client.setCredentials({ refresh_token: refreshToken });
+
+    oauth2Client.getAccessToken(function (err, token) {
+      const transport = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          type: 'OAUTH2',
+          user: authorizedUser,
+          clientId: clientId,
+          clientSecret: clientSecret,
+          refreshToken: refreshToken,
+          accessToken: token,
+        },
+      });
+
+      const mailOptions = {
+        from: from,
+        to: to,
+        subject: uSubject,
+        html: body,
+      };
+
+      const result = transport.sendMail(mailOptions, function () {});
+    });
+  }
+});
