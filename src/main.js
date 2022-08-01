@@ -1,26 +1,22 @@
-import schedule from 'node-schedule';
-import { openMessage, closedMessage, subject } from '../config.js';
-import { GetApplicationStatus } from './services/ScraperService.js';
-import { SendMail } from './services/MailService.js';
+// // import { InitScheduler } from './services/ScheduleService.js';
+// // import express from 'express';
+// // import serverless from 'serverless-http';
 
-var j = schedule.scheduleJob('0 7 * * *', function () {
-  GetApplicationStatus(function (response) {
-    let status = response;
-    let body = '';
-    let uSubject = '';
+// const express = require('express');
+// const serverless = require('serverless-http');
 
-    if (status == 'OPEN') {
-      body = openMessage;
-      uSubject = `${subject}OPEN`;
-    }
+// const app = express();
 
-    if (status == 'CLOSED') {
-      body = closedMessage;
-      uSubject = `${subject}CLOSED`;
-    }
+// const router = express.Router();
+// router.get('/', (req, res) => {
+//   res.json({
+//     hello: 'hi',
+//   });
+// });
 
-    SendMail(body, uSubject)
-      .then((mailResult) => console.log('Email sent', mailResult))
-      .catch((err) => console.error(err.messae));
-  });
-});
+// app.use('/.netlify/functions/main', router);
+// module.exports.handler = serverless(app);
+// // app.set('port', 3001);
+// // app.listen(app.get('port'), () => {
+// //   InitScheduler();
+// // });
