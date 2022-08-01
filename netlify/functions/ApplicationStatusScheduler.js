@@ -70,36 +70,36 @@ export const handler = schedule('* * * * *', async () => {
         uSubject = `${subject}CLOSED`;
       }
 
-      const oauth2Client = new google.auth.OAuth2(
-        clientId,
-        clientSecret,
-        redirectUrl
-      );
-      
-      oauth2Client.setCredentials({ refresh_token: refreshToken });
+      //   const oauth2Client = new google.auth.OAuth2(
+      //     clientId,
+      //     clientSecret,
+      //     redirectUrl
+      //   );
 
-      const accessToken = await oauth2Client.getAccessToken();
+      //   oauth2Client.setCredentials({ refresh_token: refreshToken });
 
-    const transport = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: 'OAUTH2',
-        user: authorizedUser,
-        clientId: clientId,
-        clientSecret: clientSecret,
-        refreshToken: refreshToken,
-        accessToken: accessToken,
-      },
-    });
+      //   const accessToken = await oauth2Client.getAccessToken();
 
-    const mailOptions = {
-      from: from,
-      to: to,
-      subject: uSubject,
-      html: body,
-    };
+      // const transport = nodemailer.createTransport({
+      //   service: 'gmail',
+      //   auth: {
+      //     type: 'OAUTH2',
+      //     user: authorizedUser,
+      //     clientId: clientId,
+      //     clientSecret: clientSecret,
+      //     refreshToken: refreshToken,
+      //     accessToken: accessToken,
+      //   },
+      // });
 
-    const result = await transport.sendMail(mailOptions);
+      // const mailOptions = {
+      //   from: from,
+      //   to: to,
+      //   subject: uSubject,
+      //   html: body,
+      // };
+
+      // const result = await transport.sendMail(mailOptions);
     }
   });
 
