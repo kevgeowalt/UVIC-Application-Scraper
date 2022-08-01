@@ -14,3 +14,6 @@ export const from = process.env.EMAIL_FROM;
 
 // WEB SCRAPER SETTINGS
 export const webUrl = process.env.WEB_URL;
+
+//CRON
+export const cronSchedule = process.env.CRON;
