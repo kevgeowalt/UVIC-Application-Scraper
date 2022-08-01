@@ -39,12 +39,11 @@ export const handler = schedule('* * * * *', async () => {
   //     .then((mailResult) => console.log('Email sent', mailResult))
   //     .catch((err) => console.error(err.messae));
   // });
-  let status = 'value';
-  let body = '';
-  let uSubject = '';
-  const diplomaUrl = webUrl;
 
-  request(diplomaUrl, function (error, response, html) {
+  request(webUrl, function (error, response, html) {
+    let status = 'value';
+    let body = '';
+    let uSubject = '';
     if (!error && response.statusCode == 200) {
       const $ = cheerio.load(html);
       const CLOSED = 'Not Currently Accepting';
