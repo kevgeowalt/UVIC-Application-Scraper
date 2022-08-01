@@ -17,6 +17,8 @@ import { GetApplicationStatus } from '../../src/services/ScraperService.js';
 import { SendMail } from '../../src/services/MailService.js';
 import request from 'request';
 import cheerio from 'cheerio';
+import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 
 export const handler = schedule('* * * * *', async () => {
   // GetApplicationStatus(function (response) {
@@ -68,10 +70,40 @@ export const handler = schedule('* * * * *', async () => {
         body = closedMessage;
         uSubject = `${subject}CLOSED`;
       }
+
+      const oauth2Client = new google.auth.OAuth2(
+        clientId,
+        clientSecret,
+        redirectUrl
+      );
+      
+      oauth2Client.setCredentials({ refresh_token: refreshToken });
+
+      const accessToken = await oauth2Client.getAccessToken();
+
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAUTH2',
+        user: authorizedUser,
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshToken: refreshToken,
+        accessToken: accessToken,
+      },
+    });
+
+    const mailOptions = {
+      from: from,
+      to: to,
+      subject: uSubject,
+      html: body,
+    };
+
+    const result = await transport.sendMail(mailOptions);
     }
   });
 
-  console.log(body, uSubject, status);
   return {
     statusCode: 200,
     body: 'Successfully processed request',
