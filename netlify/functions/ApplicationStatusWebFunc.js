@@ -37,7 +37,7 @@ const sendEmailFunc = async () => {
       clientId: clientId,
       clientSecret: clientSecret,
       refreshToken: refreshToken,
-      accessToken: token,
+      accessToken: accessToken,
     },
   });
 
