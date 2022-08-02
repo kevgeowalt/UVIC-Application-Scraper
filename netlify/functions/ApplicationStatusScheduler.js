@@ -73,7 +73,7 @@ const sendEmailFunc = async (message, emailSubject) => {
   return result;
 };
 
-exports.handler = schedule('* * * * *', async () => {
+exports.handler = schedule('0 7 * * *', async () => {
   let applicationStatus = await scrapeWebPageFunc();
   let bodyText = '';
   let parsedSubject = '';
