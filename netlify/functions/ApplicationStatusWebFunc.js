@@ -20,68 +20,98 @@ import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 
 export const handler = async function (event, context) {
-  request(webUrl, function (error, response, html) {
-    let status = 'value';
-    let body = '';
-    let uSubject = '';
-    if (!error && response.statusCode == 200) {
-      const $ = cheerio.load(html);
-      const CLOSED = 'Not Currently Accepting';
+  const oauth2Client = new google.auth.OAuth2(
+    clientId,
+    clientSecret,
+    redirectUrl
+  );
 
-      $('.row.dcs-dateflow.margin-bottom-20').each(function (index, element) {
-        const item = $(element).text().replace(/\s\s+/g, ',').trim();
-        let arr = item.split(',');
+  oauth2Client.setCredentials({ refresh_token: refreshToken });
 
-        let availIndex = arr.indexOf('Availability');
-        if (arr[availIndex + 1] == CLOSED) {
-          status = 'CLOSED';
-        } else {
-          status = 'OPEN';
-        }
-      });
+  oauth2Client.getAccessToken(function (err, token) {
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAUTH2',
+        user: authorizedUser,
+        clientId: clientId,
+        clientSecret: clientSecret,
+        refreshToken: refreshToken,
+        accessToken: token,
+      },
+    });
 
-      if (status == 'OPEN') {
-        body = openMessage;
-        uSubject = `${subject}OPEN`;
-      }
+    const mailOptions = {
+      from: from,
+      to: to,
+      subject: subject,
+      html: closedMessage,
+    };
 
-      if (status == 'CLOSED') {
-        body = closedMessage;
-        uSubject = `${subject}CLOSED`;
-      }
-
-      const oauth2Client = new google.auth.OAuth2(
-        clientId,
-        clientSecret,
-        redirectUrl
-      );
-
-      oauth2Client.setCredentials({ refresh_token: refreshToken });
-
-      oauth2Client.getAccessToken(function (err, token) {
-        const transport = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-            type: 'OAUTH2',
-            user: authorizedUser,
-            clientId: clientId,
-            clientSecret: clientSecret,
-            refreshToken: refreshToken,
-            accessToken: token,
-          },
-        });
-
-        const mailOptions = {
-          from: from,
-          to: to,
-          subject: uSubject,
-          html: body,
-        };
-
-        const result = transport.sendMail(mailOptions, function () {});
-      });
-    }
+    const result = transport.sendMail(mailOptions, function () {});
   });
+  //   request(webUrl, function (error, response, html) {
+  //     let status = 'value';
+  //     let body = '';
+  //     let uSubject = '';
+  //     if (!error && response.statusCode == 200) {
+  //       const $ = cheerio.load(html);
+  //       const CLOSED = 'Not Currently Accepting';
+
+  //       $('.row.dcs-dateflow.margin-bottom-20').each(function (index, element) {
+  //         const item = $(element).text().replace(/\s\s+/g, ',').trim();
+  //         let arr = item.split(',');
+
+  //         let availIndex = arr.indexOf('Availability');
+  //         if (arr[availIndex + 1] == CLOSED) {
+  //           status = 'CLOSED';
+  //         } else {
+  //           status = 'OPEN';
+  //         }
+  //       });
+
+  //       if (status == 'OPEN') {
+  //         body = openMessage;
+  //         uSubject = `${subject}OPEN`;
+  //       }
+
+  //       if (status == 'CLOSED') {
+  //         body = closedMessage;
+  //         uSubject = `${subject}CLOSED`;
+  //       }
+
+  //       const oauth2Client = new google.auth.OAuth2(
+  //         clientId,
+  //         clientSecret,
+  //         redirectUrl
+  //       );
+
+  //       oauth2Client.setCredentials({ refresh_token: refreshToken });
+
+  //       oauth2Client.getAccessToken(function (err, token) {
+  //         const transport = nodemailer.createTransport({
+  //           service: 'gmail',
+  //           auth: {
+  //             type: 'OAUTH2',
+  //             user: authorizedUser,
+  //             clientId: clientId,
+  //             clientSecret: clientSecret,
+  //             refreshToken: refreshToken,
+  //             accessToken: token,
+  //           },
+  //         });
+
+  //         const mailOptions = {
+  //           from: from,
+  //           to: to,
+  //           subject: uSubject,
+  //           html: body,
+  //         };
+
+  //         const result = transport.sendMail(mailOptions, function () {});
+  //       });
+  //     }
+  //   });
 
   return {
     statusCode: 200,
