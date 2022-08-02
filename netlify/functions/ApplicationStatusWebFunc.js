@@ -1,4 +1,3 @@
-import { schedule } from '@netlify/functions';
 import {
   openMessage,
   closedMessage,
