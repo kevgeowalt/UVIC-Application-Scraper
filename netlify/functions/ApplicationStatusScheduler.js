@@ -3,7 +3,6 @@ import {
   openMessage,
   closedMessage,
   subject,
-  cronSchedule,
   authorizedUser,
   from,
   to,
@@ -13,8 +12,7 @@ import {
   refreshToken,
   webUrl,
 } from '../../config.js';
-import { GetApplicationStatus } from '../../src/services/ScraperService.js';
-import { SendMail } from '../../src/services/MailService.js';
+
 import request from 'request';
 import cheerio from 'cheerio';
 import nodemailer from 'nodemailer';
